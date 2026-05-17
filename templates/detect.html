@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        #output-box{
+            margin-top:20px;
+            height:300px;
+            border:2px solid #333;
+            padding:20px;
+            font-size:28px;
+            background-color:white;
+            overflow-y:auto;
+            outline:none;
+            caret-color:black;
+        }
+
+        button{
+            margin-top:15px;
+            padding:10px 20px;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="split-container">
+
+    <div class="left">
+
+        <h2>Detected Text</h2>
+
+        <div id="output-box" contenteditable="true"></div>
+
+        <button onclick="speakText()">Speak Text</button>
+
+    </div>
+
+
+    <div class="right">
+
+        <h2>Live Camera</h2>
+
+        <img src="{{ url_for('video') }}" width="100%">
+
+    </div>
+
+</div>
+
+
+<script>
+
+let lastChar = "";
+
+const outputBox = document.getElementById("output-box");
+
+outputBox.focus();
+
+
+function insertAtCursor(text){
+
+    let selection = window.getSelection();
+
+    let range = selection.getRangeAt(0);
+
+    range.deleteContents();
+
+    range.insertNode(document.createTextNode(text));
+
+    range.collapse(false);
+
+    selection.removeAllRanges();
+
+    selection.addRange(range);
+
+}
+
+
+// GET CHARACTER FROM FLASK
+setInterval(()=>{
+
+    fetch("/get_char")
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        if(data.char===""){
+
+            lastChar="";
+
+        }
+
+        else if(data.char!=="" && data.char!==lastChar){
+
+            insertAtCursor(data.char);
+
+            lastChar=data.char;
+
+        }
+
+    });
+
+},1200);
+
+
+// SPACE KEY SUPPORT
+document.addEventListener("keydown",function(e){
+
+    if(e.key===" "){
+
+        e.preventDefault();
+
+        insertAtCursor(" ");
+
+    }
+});
+// BROWSER TEXT TO SPEECH
+function speakText(){
+    let text = document.getElementById("output-box").innerText.trim();
+    if(text === ""){
+        alert("No text to speak");
+        return;
+    }
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.speak(speech);
+}
+</script>
+</body>
+</html>
