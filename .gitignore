@@ -1,0 +1,4 @@
+*.zip
+*.mp4
+venv/
+__pycache__/
