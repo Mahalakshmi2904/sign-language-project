@@ -61,15 +61,14 @@ Communication barriers often exist between individuals who use sign language and
 
 ### Application Interface
 
-![1780163016186](image/README/1780163016186.png)
 
 ### Gesture Recognition
 
-![1782313169063](image/README/1782313169063.png)
+![Gesture Detection](images/gesture.png)
 
 ### Output Prediction
 
-![1782313478696](image/README/1782313478696.jpg)
+![Output](images/output.png)
 
 ## Future Enhancements
 
